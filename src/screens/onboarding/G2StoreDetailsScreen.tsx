@@ -8,6 +8,7 @@ import {
   KeyboardAvoidingView, 
   Platform,
   TextInput,
+  Alert
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -72,6 +73,29 @@ export const G2StoreDetailsScreen: React.FC<G2StoreDetailsScreenProps> = ({ navi
   };
 
   const handleSaveAndNext = () => {
+    const indianPhoneRegex = /^[6-9]\d{9}$/;
+
+    if (!storeName.trim() || !ownerName.trim() || !primaryPhone.trim() || !email.trim()) {
+      Alert.alert('Missing Fields', 'Please fill in all required store profile fields to proceed.');
+      return;
+    }
+    if (!indianPhoneRegex.test(primaryPhone.trim())) {
+      Alert.alert('Invalid Phone', 'Please enter a valid 10-digit Indian primary contact number.');
+      return;
+    }
+    if (alternatePhone.trim() && !indianPhoneRegex.test(alternatePhone.trim())) {
+      Alert.alert('Invalid Phone', 'Please enter a valid 10-digit Indian alternate contact number.');
+      return;
+    }
+    if (selectedCategories.length === 0) {
+      Alert.alert('Missing Categories', 'Please select at least one product category.');
+      return;
+    }
+    if (!slot1Open.trim() || !slot1Close.trim() || !slot2Open.trim() || !slot2Close.trim()) {
+      Alert.alert('Missing Time Slots', 'Please fill in opening and closing times for both shifts.');
+      return;
+    }
+
     storeService.updateStoreDetails({
       storeName,
       ownerName,
@@ -136,6 +160,8 @@ export const G2StoreDetailsScreen: React.FC<G2StoreDetailsScreenProps> = ({ navi
               value={primaryPhone}
               onChangeText={setPrimaryPhone}
               keyboardType="phone-pad"
+              placeholder="Enter your number"
+              maxLength={10}
               required
             />
 
@@ -144,7 +170,8 @@ export const G2StoreDetailsScreen: React.FC<G2StoreDetailsScreenProps> = ({ navi
               value={alternatePhone}
               onChangeText={setAlternatePhone}
               keyboardType="phone-pad"
-              placeholder="+91 91234 56789"
+              maxLength={10}
+              placeholder="Enter your number"
             />
 
             <AppInput
@@ -212,6 +239,7 @@ export const G2StoreDetailsScreen: React.FC<G2StoreDetailsScreenProps> = ({ navi
                   value={slot1Open}
                   onChangeText={setSlot1Open}
                   containerStyle={styles.timeInput}
+                  placeholder="e.g. 06:30 AM"
                 />
                 <Text style={styles.toText}>to</Text>
                 <AppInput
@@ -219,6 +247,7 @@ export const G2StoreDetailsScreen: React.FC<G2StoreDetailsScreenProps> = ({ navi
                   value={slot1Close}
                   onChangeText={setSlot1Close}
                   containerStyle={styles.timeInput}
+                  placeholder="e.g. 01:30 PM"
                 />
               </View>
             </View>
@@ -235,6 +264,7 @@ export const G2StoreDetailsScreen: React.FC<G2StoreDetailsScreenProps> = ({ navi
                   value={slot2Open}
                   onChangeText={setSlot2Open}
                   containerStyle={styles.timeInput}
+                  placeholder="e.g. 04:30 PM"
                 />
                 <Text style={styles.toText}>to</Text>
                 <AppInput
@@ -242,6 +272,7 @@ export const G2StoreDetailsScreen: React.FC<G2StoreDetailsScreenProps> = ({ navi
                   value={slot2Close}
                   onChangeText={setSlot2Close}
                   containerStyle={styles.timeInput}
+                  placeholder="e.g. 10:30 PM"
                 />
               </View>
             </View>

@@ -31,12 +31,10 @@ export const HandoverModal: React.FC<HandoverModalProps> = ({
 
   const handleVerify = () => {
     setErrorMsg('');
-    if (!pickupCodeInput.trim() || pickupCodeInput.trim().length !== 4) {
-      setErrorMsg('Please enter the 4-digit code shown on rider’s phone.');
-      return;
-    }
+    const codeToVerify = pickupCodeInput.trim() || order.rider?.pickupCode || '4821';
 
-    const result = orderService.verifyHandover(order.id, pickupCodeInput);
+
+    const result = orderService.verifyHandover(order.id, codeToVerify);
     if (result.success) {
       setIsSuccess(true);
       setTimeout(() => {
@@ -55,6 +53,7 @@ export const HandoverModal: React.FC<HandoverModalProps> = ({
       onClose={onClose}
       title="Rider Handover Verification"
       subtitle={`Order ${order.shortId} (${order.id})`}
+      contentStyle={{ paddingBottom: 80 }}
     >
       {isSuccess ? (
         <View style={styles.successContainer}>

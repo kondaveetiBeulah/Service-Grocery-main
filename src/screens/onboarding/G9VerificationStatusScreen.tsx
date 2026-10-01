@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, BackHandler } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -31,8 +31,24 @@ export const G9VerificationStatusScreen: React.FC<G9VerificationStatusScreenProp
     const unsub = storeService.subscribe(() => {
       setCurrentStatus(storeService.getStoreDetails().verificationStatus);
     });
-    return unsub;
-  }, []);
+
+    const onBackPress = () => {
+      return true; // Block hardware back
+    };
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+    const navListener = navigation.addListener('beforeRemove', (e) => {
+      if (e.data.action.type === 'GO_BACK') {
+        e.preventDefault(); // Block software back navigation
+      }
+    });
+
+    return () => {
+      unsub();
+      backHandler.remove();
+      navListener();
+    };
+  }, [navigation]);
 
   const handleSwitchState = (status: VerificationState) => {
     storeService.setVerificationState(status);
@@ -40,7 +56,10 @@ export const G9VerificationStatusScreen: React.FC<G9VerificationStatusScreenProp
   };
 
   const handleEnterMainApp = () => {
-    navigation.navigate('MainApp');
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'MainApp' }],
+    });
   };
 
   const renderStateContent = () => {

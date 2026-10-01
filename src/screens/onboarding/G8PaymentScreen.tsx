@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { 
   View, 
   Text, 
@@ -9,7 +9,8 @@ import {
   Modal,
   ActivityIndicator,
   Platform,
-  KeyboardAvoidingView
+  KeyboardAvoidingView,
+  Image
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -28,10 +29,10 @@ interface G8PaymentScreenProps {
 type PaymentMethodType = 'upi' | 'wallet' | 'card' | 'netbanking' | null;
 
 const POPULAR_UPI_APPS = [
-  { id: 'gpay', name: 'Google Pay', icon: 'logo-google' as const, color: '#4285F4' },
-  { id: 'phonepe', name: 'PhonePe', icon: 'flash' as const, color: '#5F259F' },
-  { id: 'paytm', name: 'Paytm', icon: 'wallet' as const, color: '#00BAF2' },
-  { id: 'cred', name: 'CRED', icon: 'shield' as const, color: '#1E293B' },
+  { id: 'gpay', name: 'Google Pay', logoSource: require('../../assets/upi/gpay.png') },
+  { id: 'phonepe', name: 'PhonePe', logoSource: require('../../assets/upi/phonepe.png') },
+  { id: 'paytm', name: 'Paytm', logoSource: require('../../assets/upi/paytm.png') },
+  { id: 'cred', name: 'CRED', logoSource: require('../../assets/upi/cred.png') },
 ];
 
 const UPI_HANDLES = ['@okhdfcbank', '@okicici', '@okaxis', '@ybl', '@paytm'];
@@ -67,6 +68,8 @@ export const G8PaymentScreen: React.FC<G8PaymentScreenProps> = ({ navigation }) 
   // Payment Processing & Modal State
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+
+  const scrollViewRef = useRef<ScrollView>(null);
 
   // Format Card Number (XXXX XXXX XXXX XXXX)
   const handleCardNumberChange = (text: string) => {
@@ -162,6 +165,7 @@ export const G8PaymentScreen: React.FC<G8PaymentScreenProps> = ({ navigation }) 
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <ScrollView 
+          ref={scrollViewRef}
           contentContainerStyle={styles.scrollContent} 
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
@@ -203,8 +207,8 @@ export const G8PaymentScreen: React.FC<G8PaymentScreenProps> = ({ navigation }) 
             activeOpacity={0.85}
           >
             <View style={styles.methodHeader}>
-              <View style={styles.methodIconWrap}>
-                <Ionicons name="phone-portrait-outline" size={20} color={colors.primary} />
+              <View style={[styles.methodIconWrap, { backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: colors.border }]}>
+                <Ionicons name="phone-portrait-outline" size={20} color={colors.textPrimary} />
               </View>
               <View style={styles.methodInfo}>
                 <View style={styles.methodTitleRow}>
@@ -238,15 +242,15 @@ export const G8PaymentScreen: React.FC<G8PaymentScreenProps> = ({ navigation }) 
                         }}
                         activeOpacity={0.7}
                       >
-                        <View style={[styles.upiAppIconCircle, { backgroundColor: app.color + '15' }]}>
-                          <Ionicons name={app.icon} size={20} color={app.color} />
+                        <View style={styles.upiAppIconWrap}>
+                          <Image source={app.logoSource} style={styles.upiAppImage} resizeMode="contain" />
                         </View>
-                        <Text style={[styles.upiAppName, isAppSelected && styles.upiAppNameActive]}>
+                        <Text style={[styles.upiAppName, isAppSelected && styles.upiAppNameActive]} numberOfLines={1}>
                           {app.name}
                         </Text>
                         {isAppSelected && (
                           <View style={styles.appCheckmark}>
-                            <Ionicons name="checkmark-circle" size={14} color={colors.primary} />
+                            <Ionicons name="checkmark-circle" size={20} color={colors.success} />
                           </View>
                         )}
                       </TouchableOpacity>
@@ -464,6 +468,11 @@ export const G8PaymentScreen: React.FC<G8PaymentScreenProps> = ({ navigation }) 
                     setCustomBankName(t);
                     if (t.trim()) setSelectedBank(null);
                   }}
+                  onFocus={() => {
+                    setTimeout(() => {
+                      scrollViewRef.current?.scrollToEnd({ animated: true });
+                    }, 100);
+                  }}
                 />
               </View>
             )}
@@ -546,7 +555,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: spacing.md,
-    paddingBottom: 40,
+    paddingBottom: 250,
   },
   depositCard: {
     backgroundColor: colors.surface,
@@ -726,25 +735,30 @@ const styles = StyleSheet.create({
   },
   upiAppBtn: {
     flex: 1,
+    height: 76,
     backgroundColor: colors.surfaceSecondary,
     borderRadius: borderRadius.md,
-    padding: spacing.xs + 2,
+    padding: spacing.xs,
     alignItems: 'center',
+    justifyContent: 'center',
     borderWidth: 1.5,
     borderColor: colors.border,
     position: 'relative',
   },
   upiAppBtnActive: {
-    borderColor: colors.primary,
-    backgroundColor: colors.primaryLight + '25',
+    borderColor: colors.success,
+    backgroundColor: '#DCFCE7', // Light green background
   },
-  upiAppIconCircle: {
+  upiAppIconWrap: {
     width: 32,
     height: 32,
-    borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 4,
+    marginBottom: 6,
+  },
+  upiAppImage: {
+    width: '100%',
+    height: '100%',
   },
   upiAppName: {
     ...typography.caption,
@@ -759,8 +773,10 @@ const styles = StyleSheet.create({
   },
   appCheckmark: {
     position: 'absolute',
-    top: 2,
-    right: 2,
+    top: -6,
+    right: -6,
+    backgroundColor: colors.surface,
+    borderRadius: 10,
   },
   vpaInputRow: {
     flexDirection: 'row',

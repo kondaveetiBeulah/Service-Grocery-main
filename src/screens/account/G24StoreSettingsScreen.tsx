@@ -5,7 +5,8 @@ import {
   StyleSheet, 
   ScrollView, 
   TouchableOpacity, 
-  Alert 
+  Alert,
+  Linking
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -195,7 +196,7 @@ export const G24StoreSettingsScreen: React.FC<G24StoreSettingsScreenProps> = ({ 
 
           <TouchableOpacity
             style={styles.menuLink}
-            onPress={() => Alert.alert('Help Desk', 'Calling OneBuddy 24x7 Partner Hotline: 1800-123-9988')}
+            onPress={() => Linking.openURL('tel:18001239988')}
             activeOpacity={0.7}
           >
             <Ionicons name="headset-outline" size={20} color={colors.primary} />
@@ -205,7 +206,7 @@ export const G24StoreSettingsScreen: React.FC<G24StoreSettingsScreenProps> = ({ 
 
           <TouchableOpacity
             style={styles.menuLink}
-            onPress={() => Alert.alert('Terms', 'OneBuddy Grocery Partner Agreement v3.4')}
+            onPress={() => Linking.openURL('https://onebuddy.com/partner-terms')}
             activeOpacity={0.7}
           >
             <Ionicons name="document-text-outline" size={20} color={colors.primary} />
@@ -213,15 +214,7 @@ export const G24StoreSettingsScreen: React.FC<G24StoreSettingsScreenProps> = ({ 
             <Ionicons name="chevron-forward" size={16} color={colors.textMuted} />
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.menuLink}
-            onPress={() => Alert.alert('App Version', 'OneBuddy Partner v2.4.0 (Build 52.0) - Expo Go Ready')}
-            activeOpacity={0.7}
-          >
-            <Ionicons name="information-circle-outline" size={20} color={colors.primary} />
-            <Text style={styles.menuLinkText}>App Version: v2.4.0-Expo</Text>
-            <Ionicons name="chevron-forward" size={16} color={colors.textMuted} />
-          </TouchableOpacity>
+
         </Card>
 
         {/* LOGOUT & DANGER ZONE */}
@@ -231,7 +224,14 @@ export const G24StoreSettingsScreen: React.FC<G24StoreSettingsScreenProps> = ({ 
             onPress={() => {
               Alert.alert('Logout', 'Are you sure you want to log out?', [
                 { text: 'Cancel', style: 'cancel' },
-                { text: 'Logout', style: 'destructive', onPress: () => navigation.navigate('AuthStack' as any) },
+                { 
+                  text: 'Logout', 
+                  style: 'destructive', 
+                  onPress: () => navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'AuthStack' as any }],
+                  }) 
+                },
               ]);
             }}
             variant="outline"

@@ -6,7 +6,8 @@ import {
   ScrollView, 
   TouchableOpacity, 
   KeyboardAvoidingView, 
-  Platform 
+  Platform,
+  Alert
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -65,20 +66,29 @@ export const G8PricingPlanBankScreen: React.FC<G8PricingPlanBankScreenProps> = (
     },
     {
       id: 'Enterprise' as const,
-      name: 'Enterprise Supermarket',
+      name: 'ENTERPRISE SUPERMARKET — 500+ ORDERS/MONTH',
       commission: '6.5%',
-      payoutFrequency: 'Same-Day Instant Settlement',
+      payoutFrequency: 'Same-Day Settlement',
       benefits: [
         'POS / ERP Direct API Synchronization',
-        'Custom Delivery Radius (Up to 10 km)',
-        'Zero Packaging Surcharge Deduction',
-        'Quarterly Volume Cash Rebates',
+        'Custom Delivery Radius — Up to 10 km',
+        'No Packaging Surcharge Deduction',
+        'Volume-Based Incentives',
       ],
-      badge: 'HIGH VOLUME (>500 orders/day)',
+      badge: 'HIGH VOLUME',
     },
   ];
 
   const handleSaveAndSubmit = () => {
+    if (!holderName.trim() || !accountNumber.trim() || !confirmAccNumber.trim() || !ifscCode.trim()) {
+      Alert.alert('Missing Fields', 'Please fill in all required bank details to proceed.');
+      return;
+    }
+    if (accountNumber !== confirmAccNumber) {
+      Alert.alert('Mismatch', 'Bank Account Numbers do not match.');
+      return;
+    }
+
     storeService.updateStoreDetails({
       commissionTier: selectedTier,
       bankDetails: {
@@ -119,7 +129,7 @@ export const G8PricingPlanBankScreen: React.FC<G8PricingPlanBankScreenProps> = (
                   onPress={() => setSelectedTier(tier.id)}
                 >
                   <View style={styles.tierTop}>
-                    <View>
+                    <View style={{ flex: 1, paddingRight: 12 }}>
                       <Text style={[styles.tierName, isSelected && styles.tierNameSelected]}>
                         {tier.name}
                       </Text>
@@ -173,6 +183,7 @@ export const G8PricingPlanBankScreen: React.FC<G8PricingPlanBankScreenProps> = (
               value={accountNumber}
               onChangeText={setAccountNumber}
               keyboardType="number-pad"
+              placeholder="e.g. 50100123456789"
               required
             />
 
@@ -181,6 +192,7 @@ export const G8PricingPlanBankScreen: React.FC<G8PricingPlanBankScreenProps> = (
               value={confirmAccNumber}
               onChangeText={setConfirmAccNumber}
               keyboardType="number-pad"
+              placeholder="e.g. 50100123456789"
               required
             />
 
@@ -315,17 +327,18 @@ const styles = StyleSheet.create({
   payoutRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    backgroundColor: colors.surfaceSecondary,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 4,
-    borderRadius: borderRadius.xs,
+    gap: 8,
+    backgroundColor: colors.surface,
+    padding: spacing.sm,
+    borderRadius: borderRadius.md,
     marginVertical: spacing.sm,
   },
   payoutText: {
     ...typography.caption,
     color: colors.primaryDark,
     fontWeight: '700',
+    flex: 1,
+    flexWrap: 'wrap',
   },
   benefitsList: {
     gap: 6,

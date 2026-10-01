@@ -17,18 +17,9 @@ interface G6CatalogSetupScreenProps {
 
 export const G6CatalogSetupScreen: React.FC<G6CatalogSetupScreenProps> = ({ navigation }) => {
   const [csvModalVisible, setCsvModalVisible] = useState(false);
-  const [selectedMethod, setSelectedMethod] = useState<string>('master');
+  const [selectedMethod, setSelectedMethod] = useState<string>('csv');
 
   const catalogImportOptions = [
-    {
-      id: 'master',
-      title: 'OneBuddy Master Catalog',
-      subtitle: 'Instant selection from 20,000+ pre-verified FMCG, dairy, produce & staple items with HD images and MRPs.',
-      icon: 'library' as const,
-      badge: 'FASTEST · 2 MINS',
-      badgeColor: colors.successLight,
-      badgeText: '#047857',
-    },
     {
       id: 'csv',
       title: 'Import CSV / Excel Spreadsheet',

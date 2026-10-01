@@ -109,6 +109,15 @@ export const G5LocationDeliveryScreen: React.FC<G5LocationDeliveryScreenProps> =
   };
 
   const handleSaveAndProceed = () => {
+    if (!address1.trim() || !city.trim() || !pincode.trim()) {
+      Alert.alert('Missing Fields', 'Please fill in all required address fields to proceed.');
+      return;
+    }
+    if (scheduledEnabled && (!slotDuration.trim() || !maxOrdersSlot.trim())) {
+      Alert.alert('Missing Fields', 'Please fill in all scheduled delivery fields to proceed.');
+      return;
+    }
+
     storeService.updateStoreDetails({
       address: {
         addressLine1: address1,
@@ -262,6 +271,7 @@ export const G5LocationDeliveryScreen: React.FC<G5LocationDeliveryScreenProps> =
                 value={city}
                 onChangeText={setCity}
                 containerStyle={styles.halfInput}
+                placeholder="e.g. Bengaluru"
                 required
               />
               <AppInput
@@ -271,6 +281,7 @@ export const G5LocationDeliveryScreen: React.FC<G5LocationDeliveryScreenProps> =
                 keyboardType="number-pad"
                 maxLength={6}
                 containerStyle={styles.halfInput}
+                placeholder="e.g. 560034"
                 required
               />
             </View>
@@ -347,6 +358,7 @@ export const G5LocationDeliveryScreen: React.FC<G5LocationDeliveryScreenProps> =
                   onChangeText={setSlotDuration}
                   keyboardType="number-pad"
                   containerStyle={styles.halfInput}
+                  placeholder="e.g. 60"
                 />
                 <AppInput
                   label="Max Orders Per Slot"
@@ -354,6 +366,7 @@ export const G5LocationDeliveryScreen: React.FC<G5LocationDeliveryScreenProps> =
                   onChangeText={setMaxOrdersSlot}
                   keyboardType="number-pad"
                   containerStyle={styles.halfInput}
+                  placeholder="e.g. 25"
                 />
               </View>
             )}

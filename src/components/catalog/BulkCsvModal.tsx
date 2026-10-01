@@ -87,6 +87,7 @@ export const BulkCsvModal: React.FC<BulkCsvModalProps> = ({
                 loading={isValidating}
                 variant="primary"
                 style={styles.uploadBtn}
+                textStyle={{ textAlign: 'center' }}
               />
             </View>
 
@@ -149,12 +150,14 @@ export const BulkCsvModal: React.FC<BulkCsvModalProps> = ({
                 onPress={() => setHasUploaded(false)}
                 variant="outline"
                 style={styles.btnFlex}
+                textStyle={{ flex: 1, textAlign: 'center', flexWrap: 'wrap' }}
               />
               <AppButton
                 title={`Import ${validCount} Valid SKUs`}
                 onPress={handleConfirmImport}
                 variant="primary"
                 style={styles.btnFlex}
+                textStyle={{ flex: 1, textAlign: 'center', flexWrap: 'wrap' }}
               />
             </View>
           </View>

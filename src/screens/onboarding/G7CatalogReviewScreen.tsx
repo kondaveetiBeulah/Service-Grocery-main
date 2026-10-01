@@ -27,12 +27,7 @@ interface G7CatalogReviewScreenProps {
   navigation: NativeStackNavigationProp<AuthStackParamList, 'G7CatalogReview'>;
 }
 
-const TABS: { key: CatalogFilterTab; label: string }[] = [
-  { key: 'All', label: 'All' },
-  { key: 'Needs Attention', label: 'Needs Attention' },
-  { key: 'Unavailable', label: 'Unavailable' },
-  { key: 'Pending Review', label: 'Pending Review' },
-];
+
 
 export const G7CatalogReviewScreen: React.FC<G7CatalogReviewScreenProps> = ({ navigation }) => {
   const [activeTab, setActiveTab] = useState<CatalogFilterTab>('All');
@@ -66,9 +61,12 @@ export const G7CatalogReviewScreen: React.FC<G7CatalogReviewScreenProps> = ({ na
     );
   };
 
-  const displayProducts = searchQuery.trim()
+  let displayProducts = searchQuery.trim()
     ? catalogService.searchProducts(searchQuery, activeTab)
     : products;
+
+  // Filter out products without images and the raw forest product
+  displayProducts = displayProducts.filter(p => p.sku !== 'SKU-LOCAL-ORGANIC-HONEY' && p.imageUrl);
 
   const getTabCount = (tabKey: CatalogFilterTab) => {
     return catalogService.getProducts(tabKey).length;
@@ -124,38 +122,6 @@ export const G7CatalogReviewScreen: React.FC<G7CatalogReviewScreenProps> = ({ na
           </View>
         </View>
 
-        {/* Filter Tabs — strictly constrained in height to prevent vertical stretching */}
-        <View style={styles.filterSection}>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.filterTabsWrap}
-            style={styles.filterScrollView}
-          >
-            {TABS.map(({ key, label }) => {
-              const isSelected = activeTab === key;
-              const count = getTabCount(key);
-              return (
-                <TouchableOpacity
-                  key={key}
-                  style={[styles.filterTab, isSelected && styles.filterTabActive]}
-                  onPress={() => handleTabChange(key)}
-                  activeOpacity={0.7}
-                >
-                  <Text style={[styles.filterTabText, isSelected && styles.filterTabTextActive]}>
-                    {label}
-                  </Text>
-                  <View style={[styles.tabBadge, isSelected ? styles.tabBadgeActive : styles.tabBadgeInactive]}>
-                    <Text style={[styles.tabBadgeText, isSelected && styles.tabBadgeTextActive]}>
-                      {count}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              );
-            })}
-          </ScrollView>
-        </View>
-
         {/* Product Cards List or Empty State */}
         <ScrollView contentContainerStyle={styles.productList} showsVerticalScrollIndicator={false}>
           {displayProducts.length === 0 ? (
@@ -170,7 +136,6 @@ export const G7CatalogReviewScreen: React.FC<G7CatalogReviewScreenProps> = ({ na
               actionTitle={searchQuery ? 'Clear Search' : 'Show All Products'}
               onActionPress={() => {
                 if (searchQuery) setSearchQuery('');
-                else handleTabChange('All');
               }}
             />
           ) : (
@@ -192,19 +157,19 @@ export const G7CatalogReviewScreen: React.FC<G7CatalogReviewScreenProps> = ({ na
               />
             ))
           )}
-
-          {/* Footer CTA */}
-          <View style={styles.footer}>
-            <AppButton
-              title="Confirm Catalog & Pricing Plan"
-              onPress={() => navigation.navigate('G8PricingPlanBank')}
-              variant="primary"
-              size="large"
-              fullWidth
-              rightIcon={<Ionicons name="arrow-forward" size={18} color={colors.textInverse} />}
-            />
-          </View>
         </ScrollView>
+
+        {/* Sticky Footer CTA */}
+        <View style={styles.stickyFooter}>
+          <AppButton
+            title="Confirm Catalog & Pricing Plan"
+            onPress={() => navigation.navigate('G8PricingPlanBank')}
+            variant="primary"
+            size="large"
+            fullWidth
+            rightIcon={<Ionicons name="arrow-forward" size={18} color={colors.textInverse} />}
+          />
+        </View>
       </View>
 
       {/* Price Adjustment Modal */}
@@ -344,8 +309,10 @@ const styles = StyleSheet.create({
     padding: spacing.md,
     paddingBottom: spacing.xxl,
   },
-  footer: {
-    marginTop: spacing.md,
-    marginBottom: spacing.xxl,
+  stickyFooter: {
+    padding: spacing.md,
+    backgroundColor: colors.background,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
   },
 });

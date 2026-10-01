@@ -77,6 +77,7 @@ export const G19BulkUpdateScreen: React.FC<G19BulkUpdateScreenProps> = ({ naviga
               variant="outline"
               size="medium"
               style={styles.flex1}
+              textStyle={{ flex: 1, textAlign: 'center', flexWrap: 'wrap' }}
               leftIcon={<Ionicons name="download-outline" size={18} color={colors.primary} />}
             />
             <AppButton
@@ -85,6 +86,7 @@ export const G19BulkUpdateScreen: React.FC<G19BulkUpdateScreenProps> = ({ naviga
               variant="primary"
               size="medium"
               style={styles.flex1}
+              textStyle={{ flex: 1, textAlign: 'center', flexWrap: 'wrap' }}
               leftIcon={<Ionicons name="cloud-upload" size={18} color={colors.textInverse} />}
             />
           </View>
@@ -138,6 +140,7 @@ export const G19BulkUpdateScreen: React.FC<G19BulkUpdateScreenProps> = ({ naviga
               variant="outline"
               size="medium"
               style={styles.flex1}
+              textStyle={{ flex: 1, textAlign: 'center', flexWrap: 'wrap' }}
               leftIcon={<Ionicons name="checkmark-circle-outline" size={18} color={colors.primary} />}
             />
             <AppButton
@@ -146,7 +149,7 @@ export const G19BulkUpdateScreen: React.FC<G19BulkUpdateScreenProps> = ({ naviga
               variant="outline"
               size="medium"
               style={styles.flex1}
-              textStyle={{ color: colors.error }}
+              textStyle={{ color: colors.error, flex: 1, textAlign: 'center', flexWrap: 'wrap' }}
               leftIcon={<Ionicons name="close-circle-outline" size={18} color={colors.error} />}
             />
           </View>

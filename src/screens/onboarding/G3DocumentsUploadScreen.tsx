@@ -80,8 +80,7 @@ export const G3DocumentsUploadScreen: React.FC<G3DocumentsUploadScreenProps> = (
 
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ['images'],
-        allowsEditing: true,
-        aspect: [4, 3],
+        allowsEditing: false,
         quality: 0.8,
       });
 
@@ -96,6 +95,18 @@ export const G3DocumentsUploadScreen: React.FC<G3DocumentsUploadScreenProps> = (
 
   const handleRemovePhoto = (index: number) => {
     setStorePhotos(storePhotos.filter((_, i) => i !== index));
+  };
+
+  const handleNext = () => {
+    if (!fssaiNum.trim() || !fssaiExpiry.trim() || !gstNum.trim() || !shopLicNum.trim() || !panNum.trim()) {
+      Alert.alert('Missing Fields', 'Please fill in all required document fields to proceed.');
+      return;
+    }
+    if (storePhotos.length === 0) {
+      Alert.alert('Missing Photos', 'Please upload at least one store photo.');
+      return;
+    }
+    navigation.navigate('G4DocumentReview');
   };
 
   return (
@@ -137,6 +148,7 @@ export const G3DocumentsUploadScreen: React.FC<G3DocumentsUploadScreenProps> = (
             onChangeText={setFssaiNum}
             keyboardType="number-pad"
             maxLength={14}
+            placeholder="e.g. 11223344556677"
             required
           />
 
@@ -195,6 +207,7 @@ export const G3DocumentsUploadScreen: React.FC<G3DocumentsUploadScreenProps> = (
             onChangeText={setGstNum}
             autoCapitalize="characters"
             maxLength={15}
+            placeholder="e.g. 29ABCDE1234F1Z5"
             required
           />
 
@@ -239,6 +252,7 @@ export const G3DocumentsUploadScreen: React.FC<G3DocumentsUploadScreenProps> = (
             label="License Reference Number"
             value={shopLicNum}
             onChangeText={setShopLicNum}
+            placeholder="e.g. BBMP/TR/2025/9981"
             required
           />
 
@@ -272,6 +286,7 @@ export const G3DocumentsUploadScreen: React.FC<G3DocumentsUploadScreenProps> = (
             onChangeText={setPanNum}
             autoCapitalize="characters"
             maxLength={10}
+            placeholder="e.g. ABCDE1234F"
             required
           />
         </View>
@@ -322,7 +337,7 @@ export const G3DocumentsUploadScreen: React.FC<G3DocumentsUploadScreenProps> = (
         <View style={styles.footer}>
           <AppButton
             title="Review & Confirm Documents"
-            onPress={() => navigation.navigate('G4DocumentReview')}
+            onPress={handleNext}
             variant="primary"
             size="large"
             fullWidth

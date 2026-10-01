@@ -288,6 +288,7 @@ export const G18AddEditProductScreen: React.FC<G18AddEditProductScreenProps> = (
                 keyboardType="numeric"
                 containerStyle={styles.flex1}
                 editable={!isMasterItem}
+                placeholder="e.g. 100"
                 required
               />
 
@@ -299,6 +300,7 @@ export const G18AddEditProductScreen: React.FC<G18AddEditProductScreenProps> = (
                 containerStyle={styles.flex1}
                 error={priceError}
                 helperText="Must be <= MRP"
+                placeholder="e.g. 95"
                 required
               />
             </View>
@@ -321,6 +323,7 @@ export const G18AddEditProductScreen: React.FC<G18AddEditProductScreenProps> = (
                 value={maxPerOrder}
                 onChangeText={setMaxPerOrder}
                 keyboardType="number-pad"
+                placeholder="e.g. 6"
                 containerStyle={styles.flex1}
               />
 
